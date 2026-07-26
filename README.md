@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/github/license/tamasbege/staff-engineer-skills)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin%20Marketplace-5A67D8)](https://code.claude.com/docs/en/skills)
 
-A Claude Code **plugin marketplace** for the hard, production-critical parts of backend engineering — add the marketplace once, then install whichever plugins you need.
+A Claude Code **plugin marketplace** of senior-specialist skills for the hard, production-critical parts of software engineering — backend reliability, adversarial review, and frontend craft — add the marketplace once, then install whichever plugins you need.
 
 ## Contents
 
@@ -108,7 +108,9 @@ Claude Code discovers skills automatically from their `description` frontmatter 
 
 ## Output format
 
-Every skill asks one question up front: **HTML (default) or Markdown?** The design deliverable is written as a single self-contained file (suggested location: `docs/`) meant for humans — inline CSS, table of contents, styled tables and code blocks. Implementation artifacts (DDL, middleware, IaC, config) are additionally written to real source files when you want them applied.
+Most skills — all of `the-hard-parts`, plus `expressive-motion-architect` — ask one question up front: **HTML (default) or Markdown?** The design deliverable is written as a single self-contained file (suggested location: `docs/`) meant for humans — inline CSS, table of contents, styled tables and code blocks. Implementation artifacts (DDL, middleware, IaC, config) are additionally written to real source files when you want them applied.
+
+`blind-spot-breaker` and `ux-reviewer` are review workflows, not design-and-build skills — they instead produce a structured verdict directly in chat (`BLOCK`/`CONCERNS`/`CLEAN` and `DO NOT SHIP`/`SHIP WITH FIXES`/`SHIP` respectively), built for fast, iterative review rather than a saved document.
 
 ## License
 

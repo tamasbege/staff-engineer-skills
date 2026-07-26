@@ -14,18 +14,18 @@ This is the actual security model for this repo — there is no automated scanne
 
 ## Adding a new skill
 
-Put it at `plugins/the-hard-parts/skills/<skill-name>/SKILL.md` and match the house style used by the existing skills:
+Put it at `plugins/<plugin-name>/skills/<skill-name>/SKILL.md`, in whichever existing plugin fits its theme (`the-hard-parts` for backend reliability, `review-toolkit` for review workflows, `frontend-hard-parts` for frontend craft) — or start a new plugin if it doesn't fit any of those (see below). Match the house style used by the existing skills:
 
 1. **YAML frontmatter** with `name` and a `description` written in third person, packed with the concrete symptoms/phrasings a user would actually say — this is what drives automatic invocation.
-2. **Phase 0 — output format.** Ask HTML (default) or Markdown up front, before anything else.
+2. **Phase 0 — output format**, for design-and-build skills that produce a shareable deliverable (the norm — e.g. everything in `the-hard-parts`): ask HTML (default) or Markdown up front, before anything else. Skip this for fast, iterative review-workflow skills (like `blind-spot-breaker`/`ux-reviewer`) that instead output a structured verdict directly in chat — state which pattern your skill uses and why in the PR description.
 3. **Mandatory context-gathering phase**, with an instruction to inspect the codebase first and only ask what the code can't answer, plus a partial-context protocol (ask once more, then fall back gracefully — never loop).
 4. **A concrete reference example** (real schema/code/config, not abstract description) showing the depth expected of every output.
 5. **An anti-patterns table** and a **testable constraints** list the output must satisfy.
 6. **A final deliverables checklist.**
 
-Read a couple of the existing `SKILL.md` files before starting — they're the actual spec.
+Read a couple of the existing `SKILL.md` files before starting — pick ones that match the kind of skill you're adding (design-and-build vs. review workflow); they're the actual spec.
 
-If your skill has a slash-command launcher, add one file per command under `plugins/the-hard-parts/commands/`, and add it to the catalog in `commands/hard-parts.md` and the table in `README.md`.
+If your skill has a slash-command launcher, add one file per command under that plugin's `commands/` directory, and add it to the catalog in that plugin's discovery command (e.g. `commands/hard-parts.md`) and the table in `README.md`.
 
 ## Adding a new plugin
 

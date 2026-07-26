@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.4 — 2026-07-26
+
+Fixed stale "backend-only" framing left over from before `review-toolkit` and `frontend-hard-parts` existed. No plugin content changed — docs and the marketplace description only.
+
+- **README**: broadened the top-level tagline from "the hard, production-critical parts of backend engineering" to cover all three plugins (backend reliability, adversarial review, frontend craft). The `the-hard-parts` plugin's own description was left as-is — it genuinely is backend-only.
+- **README**: the "Output format" section claimed every skill asks HTML/Markdown up front; that's true for 9 of 11 skills, but `blind-spot-breaker` and `ux-reviewer` deliberately produce an inline structured verdict instead (fast review workflows, not saved deliverables). Section now describes both patterns.
+- **CONTRIBUTING.md**: "Adding a new skill" hardcoded `plugins/the-hard-parts/...` as the path for any new skill — a leftover from when that was the only plugin. Now points contributors to the right plugin by theme (or a new one), and the Phase 0 output-format step is scoped to design-and-build skills rather than stated as universal.
+- **CLAUDE.md**: same output-format scoping fix in the house-style summary.
+- **marketplace.json**: `metadata.description` was backend-only; broadened to match the README.
+
 ## 1.1.3 — 2026-07-26
 
 - README: added an "Updates" section explaining how installed users receive new versions (`/plugin marketplace update` + update/reinstall via `/plugin`), and that manual-copy installs must re-copy. No plugin content changed.
