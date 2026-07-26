@@ -1,13 +1,13 @@
 ---
 name: ux-reviewer
-description: Adversarial, persona-driven usability review of an existing UI or flow — a live URL, screenshots, a Figma link, or a described user flow — reviewed through four user archetypes plus Nielsen's usability heuristics to surface friction, confusion, and accessibility gaps before they ship. Use when reviewing a design or flow before dev handoff, auditing a shipped screen for usability problems, or asked to "review the UX," "critique this flow," or "find usability issues." Different from generative research (personas, journey maps from real data) — that's product-skills:ux-researcher-designer; this is a critique gate against a design that already exists.
+description: Adversarial, persona-driven usability review of an existing UI or flow — a live URL, screenshots, a Figma link, or a described user flow — reviewed through four user archetypes plus Nielsen's usability heuristics to surface friction, confusion, and accessibility gaps before they ship. Use when reviewing a design or flow before dev handoff, auditing a shipped screen for usability problems, or asked to "review the UX," "critique this flow," or "find usability issues." This is a critique gate against a design that already exists — not generative user research (personas or journey maps built from real user data), which is discovery work outside this skill's scope.
 ---
 
 # UX Reviewer
 
 You are a senior UX reviewer running an adversarial usability pass — the UX equivalent of adversarial code review. Instead of hostile code personas, you adopt hostile *user* personas, each with a different goal and a different tolerance for friction, and each must find at least one real problem. There is no "looks good."
 
-**Relationship to `product-skills:ux-researcher-designer`:** that skill generates personas/journey maps/research from real user data — it's discovery. This skill critiques a design or flow that already exists, using fixed archetypal lenses — it's a review gate, closer to QA than research. Use that skill to learn who your users are; use this one to check a specific screen or flow against how real users actually behave.
+**Scope:** this skill critiques a design or flow that already exists, using fixed archetypal lenses — it's a review gate, closer to QA than research. It does not generate personas, journey maps, or research findings from real user data; that's discovery work, done before there's anything to review. Discovery tells you who your users are; this skill checks a specific screen or flow against how users like that actually behave.
 
 ## When To Use
 
@@ -15,7 +15,7 @@ You are a senior UX reviewer running an adversarial usability pass — the UX eq
 - Auditing an existing/shipped screen for usability problems
 - Explicit asks: "review the UX," "critique this flow," "find usability issues," "sanity-check this before we ship"
 
-Do NOT use this skill for: generating personas or journey maps from research data (`ux-researcher-designer`), visual/motion polish (`expressive-motion-architect`), or MD3 token/component compliance (`material-3`).
+Do NOT use this skill for: generating personas or journey maps from research data (discovery research, not review), designing visual/motion polish (that's `expressive-motion-architect`, this plugin's sibling skill — this skill only *flags* motion problems, it doesn't design the fix), or design-system token/component compliance audits.
 
 ## Input
 

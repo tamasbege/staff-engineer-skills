@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2 — 2026-07-26
+
+- Made the `frontend-hard-parts` skills fully standalone: both referenced skills that exist only in the author's local environment (`material-3`, `product-skills:ux-researcher-designer`, `epic-design`) and would be dangling references for anyone installing this plugin. Rewrote those passages as self-contained scope statements — e.g., `expressive-motion-architect` now describes its boundary as "layers on top of whatever design system is in place without redefining its tokens" rather than deferring to a `material-3` skill, and `ux-reviewer` states its critique-not-research scope directly instead of pointing at a research skill. Same-plugin sibling references (which travel together on install) were kept.
+
 ## 1.1.1 — 2026-07-26
 
 - Renamed `review-toolkit`'s **adversarial-code-reviewer** to **blind-spot-breaker** — a name describing what the skill accomplishes rather than the mechanism, and distinct from its inspiration's name (see below). The `/adversarial-review` command is unchanged.
