@@ -1,7 +1,7 @@
 {
   "name": "review-toolkit",
   "version": "1.0.0",
-  "description": "Adversarial, persona-driven review skills that break the self-review blind spot. Ships adversarial-code-reviewer today; a natural home for more review-workflow skills later.",
+  "description": "Adversarial, persona-driven review skills that break the self-review blind spot. Ships blind-spot-breaker today; a natural home for more review-workflow skills later.",
   "author": {
     "name": "tamasbege",
     "email": "begetamas@gmail.com"

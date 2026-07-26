@@ -33,7 +33,7 @@ Adversarial, persona-driven review skills — the antidote to the self-review bl
 
 | Skill | What it produces | Use when |
 |---|---|---|
-| 🥷 **adversarial-code-reviewer** | A structured review (`BLOCK`/`CONCERNS`/`CLEAN`) from four hostile personas — Saboteur, New Hire, Security Auditor, and an On-Call Engineer persona focused on production operability (logging, alerting, rollback safety) | Before merging a PR, when a review feels like a rubber stamp, or you want a genuinely harsh second opinion |
+| 🥷 **blind-spot-breaker** | A structured review (`BLOCK`/`CONCERNS`/`CLEAN`) from four hostile personas — Saboteur, New Hire, Security Auditor, and an On-Call Engineer persona focused on production operability (logging, alerting, rollback safety) | Before merging a PR, when a review feels like a rubber stamp, or you want a genuinely harsh second opinion |
 
 **🎯 Slash command:** `/adversarial-review` (supports `--diff <ref>`, `--file <path>`, or a PR number)
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1 — 2026-07-26
+
+- Renamed `review-toolkit`'s **adversarial-code-reviewer** to **blind-spot-breaker** — a name describing what the skill accomplishes rather than the mechanism, and distinct from its inspiration's name (see below). The `/adversarial-review` command is unchanged.
+- Added explicit credit in the skill file: the three-persona structure (Saboteur, New Hire, Security Auditor) and severity-promotion mechanic are adapted from the `adversarial-reviewer` skill in Alireza Rezvani's [claude-skills](https://github.com/alirezarezvani/claude-skills) `engineering-skills` plugin (MIT licensed). This repo's version is an independent rewrite with a fourth persona (On-Call Engineer) added, not a copy of the original text.
+
 ## 1.1.0 — 2026-07-26
 
 Two new plugins, validating the multi-plugin marketplace layout for the first time.
