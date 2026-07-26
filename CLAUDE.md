@@ -9,7 +9,7 @@ Claude Code plugin marketplace. The repo is the marketplace: `.claude-plugin/mar
 Therefore, on **every** change:
 
 1. **Any change inside `plugins/<name>/`** (skill text, command, manifest description — anything) → bump that plugin's `version` in its `plugin.json`. Patch for fixes/wording, minor for new skills/commands, major for renames or removals of skills users may reference.
-2. **Any noteworthy repo change** (including the above, plus docs like README/CONTRIBUTING) → bump `metadata.version` in `.claude-plugin/marketplace.json` and add a CHANGELOG entry describing it.
+2. **Any noteworthy repo change** (including the above, plus user-facing docs like README/CONTRIBUTING) → bump `metadata.version` in `.claude-plugin/marketplace.json` and add a CHANGELOG entry describing it. Exception: internal contributor docs (this file) don't need a release entry — the rule targets changes users can see or install.
 3. Never commit a plugin content change without its version bump in the same commit. This has been missed once already (see CHANGELOG 1.1.2) — treat it as part of the change, not an afterthought.
 
 Plugins version independently: adding or fixing one plugin does not touch the others' versions. The marketplace version is the human-facing release number the CHANGELOG narrates; plugin versions are the mechanically meaningful ones.
@@ -22,6 +22,23 @@ Plugins version independently: adding or fixing one plugin does not touch the ot
 4. Add a CHANGELOG entry under the new marketplace version.
 5. If skills/commands were added, renamed, or removed: update the README tables and the plugin's discovery command catalog (e.g. `commands/hard-parts.md`).
 6. Commit (normal commit, no history rewriting — the repo is public) and push. Pushing to `main` is the release.
+
+## Renames touch many files
+
+Renaming a skill (or plugin) fans out further than it looks. Grep the old name across the whole repo and expect hits in: the skill directory name, `SKILL.md` frontmatter `name` + H1, any `commands/*.md` that invoke it, the plugin's `plugin.json` description, the root `marketplace.json` description, the README tables, and the plugin's discovery-command catalog. Leave historical CHANGELOG entries under the old name — they're an accurate record of what that release was called.
+
+## Verifying changes
+
+There is no CI. Before committing, at minimum:
+
+- Parse every touched manifest: `python -c "import json;json.load(open('...'))"` (or equivalent) on `marketplace.json` and any `plugin.json`.
+- Check each new/renamed skill: directory name matches frontmatter `name`; frontmatter has `name` + `description`; the description is third-person and trigger-rich (it drives auto-invocation).
+- Grep for dangling references (old names, external skills) across `plugins/`, README, and command files.
+- To smoke-test locally, the marketplace can be added from the working copy and plugins reloaded with `/reload-plugins` in a Claude Code session.
+
+## Environment quirks
+
+- The `gh` CLI here is authenticated against a GitHub **Enterprise** host, not github.com — `gh repo view`/`gh api` against `tamasbege/staff-engineer-skills` fail even though `git push` over https works fine. Don't burn time on it; use plain git, and give the user copy-paste steps for anything requiring the GitHub web UI or a github.com-authenticated `gh`.
 
 ## Conventions
 
