@@ -1,0 +1,10 @@
+# IDE
+.idea/
+.vscode/
+
+# Claude Code local state
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
