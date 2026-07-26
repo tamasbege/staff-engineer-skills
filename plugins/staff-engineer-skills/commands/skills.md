@@ -1,10 +1,12 @@
 ---
-description: List the-hard-parts skills and pick the right one for your problem
+description: List all staff-engineer-skills and pick the right one for your problem
 ---
 
-The user wants to know what the-hard-parts plugin offers, or isn't sure which skill fits their problem.
+The user wants to know what this plugin offers, or isn't sure which skill fits their problem.
 
 Show them this catalog, then ask which problem they're facing (or match their description below to a skill and offer to launch it):
+
+**Backend reliability**
 
 | Skill | Solves | Typical symptoms |
 |---|---|---|
@@ -17,6 +19,19 @@ Show them this catalog, then ask which problem they're facing (or match their de
 | **caching-strategy-architect** (`/design-caching`) | Caching that stays correct | High DB load; stale data after writes; cache stampedes; "where/how should we cache?" |
 | **auth-flow-architect** (`/design-auth`) | Authentication & authorization | Building login; sessions vs JWTs; IdP integration; token storage/refresh questions; multi-tenant auth |
 
-If the user already described their problem in the arguments below, recommend the matching skill (or combination — e.g., retry-safety usually needs idempotency-builder before resilience-strategist) and offer to invoke it now.
+**Review**
+
+| Skill | Solves | Typical symptoms |
+|---|---|---|
+| **blind-spot-breaker** (`/adversarial-review`) | Self-review blind spots | Before merging a PR; a review feels like a rubber stamp; want a genuinely harsh second opinion |
+
+**Frontend craft**
+
+| Skill | Solves | Typical symptoms |
+|---|---|---|
+| **expressive-motion-architect** (`/expressive-motion`) | Bold, expressive motion/interaction design | UI feels flat or "default Material"; want spring animations, shape morphing, or a signature interaction moment |
+| **ux-reviewer** (`/ux-review`) | Adversarial usability review | Reviewing a design/flow before dev handoff; auditing a shipped screen for usability gaps |
+
+If the user already described their problem in the arguments below, recommend the matching skill (or combination, e.g. retry-safety usually needs idempotency-builder before resilience-strategist) and offer to invoke it now.
 
 User's problem description (may be empty): $ARGUMENTS

@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.0 (2026-07-26)
+
+Merged `the-hard-parts`, `review-toolkit`, and `frontend-hard-parts` into a single plugin, `staff-engineer-skills`, matching the marketplace name. All 11 skills and 11 slash commands are unchanged in content; only the packaging changed.
+
+Reasoning: the three-plugin split added real friction (three install commands, three `plugin.json` files to remember to version-bump, which already caused a missed bump once) without a benefit anyone was using, since there was no demand yet for installing only a subset. The nested `plugins/<name>/` layout is kept, so a genuinely different category can still get its own plugin later without restructuring again.
+
+**If you had the old plugins installed:** `/plugin uninstall the-hard-parts`, `/plugin uninstall review-toolkit`, `/plugin uninstall frontend-hard-parts`, then `/plugin marketplace update staff-engineer-skills` and `/plugin install staff-engineer-skills`.
+
+- Replaced the `/hard-parts` and `/frontend-hard-parts` discovery commands with a single unified `/skills`, covering all 11 skills grouped by category (backend reliability, review, frontend craft).
+- The new plugin starts at its own `1.0.0`; the merge is a fresh packaging identity, not a version continuation of any of the three predecessors.
+- `marketplace.json` now lists one plugin entry instead of three.
+- README restructured: one "Skills" section with three category subheadings, replacing the three "Plugins" subsections.
+
 ## 1.1.5 (2026-07-26)
 
 Rephrased README.md, CONTRIBUTING.md, CLAUDE.md, and this file to remove every em-dash, replacing each with the punctuation a human writer would actually reach for (colons, commas, semicolons, or splitting into two sentences). Scope was human-facing docs only; SKILL.md and command files are instructions read by an AI agent, not prose read by people, so they were left untouched.

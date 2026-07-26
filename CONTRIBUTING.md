@@ -14,10 +14,10 @@ This is the actual security model for this repo: there is no automated scanner t
 
 ## Adding a new skill
 
-Put it at `plugins/<plugin-name>/skills/<skill-name>/SKILL.md`, in whichever existing plugin fits its theme (`the-hard-parts` for backend reliability, `review-toolkit` for review workflows, `frontend-hard-parts` for frontend craft), or start a new plugin if it doesn't fit any of those (see below). Match the house style used by the existing skills:
+Put it at `plugins/staff-engineer-skills/skills/<skill-name>/SKILL.md`. Match the house style used by the existing skills:
 
 1. **YAML frontmatter** with `name` and a `description` written in third person, packed with the concrete symptoms/phrasings a user would actually say. This is what drives automatic invocation.
-2. **Phase 0, output format**, for design-and-build skills that produce a shareable deliverable (the norm, e.g. everything in `the-hard-parts`): ask HTML (default) or Markdown up front, before anything else. Skip this for fast, iterative review-workflow skills (like `blind-spot-breaker`/`ux-reviewer`) that instead output a structured verdict directly in chat. State which pattern your skill uses and why in the PR description.
+2. **Phase 0, output format**, for design-and-build skills that produce a shareable deliverable (the norm, e.g. everything in the backend-reliability category): ask HTML (default) or Markdown up front, before anything else. Skip this for fast, iterative review-workflow skills (like `blind-spot-breaker`/`ux-reviewer`) that instead output a structured verdict directly in chat. State which pattern your skill uses and why in the PR description.
 3. **Mandatory context-gathering phase**, with an instruction to inspect the codebase first and only ask what the code can't answer, plus a partial-context protocol (ask once more, then fall back gracefully, never loop).
 4. **A concrete reference example** (real schema/code/config, not abstract description) showing the depth expected of every output.
 5. **An anti-patterns table** and a **testable constraints** list the output must satisfy.
@@ -25,11 +25,11 @@ Put it at `plugins/<plugin-name>/skills/<skill-name>/SKILL.md`, in whichever exi
 
 Read a couple of the existing `SKILL.md` files before starting, picking ones that match the kind of skill you're adding (design-and-build vs. review workflow); they're the actual spec.
 
-If your skill has a slash-command launcher, add one file per command under that plugin's `commands/` directory, and add it to the catalog in that plugin's discovery command (e.g. `commands/hard-parts.md`) and the table in `README.md`.
+If your skill has a slash-command launcher, add one file under `plugins/staff-engineer-skills/commands/`, and add it to the catalog in `commands/skills.md` and the tables in `README.md`.
 
 ## Adding a new plugin
 
-Create `plugins/<plugin-name>/` with its own `.claude-plugin/plugin.json`, `skills/`, and (optionally) `commands/`/`agents/`, then add an entry to the `plugins` array in `.claude-plugin/marketplace.json`.
+This repo currently ships one plugin (`staff-engineer-skills`), covering backend reliability, review, and frontend craft. If a contribution is a genuinely different kind of thing (not a fit for any of those categories), it can get its own plugin: create `plugins/<plugin-name>/` with its own `.claude-plugin/plugin.json`, `skills/`, and (optionally) `commands/`/`agents/`, then add an entry to the `plugins` array in `.claude-plugin/marketplace.json`. Bar for this is high; prefer adding to the existing plugin's categories first.
 
 ## Review process for skills
 

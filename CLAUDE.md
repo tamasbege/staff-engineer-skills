@@ -20,7 +20,7 @@ Plugins version independently: adding or fixing one plugin does not touch the ot
 2. Bump the affected plugin's `version` (and only that plugin's).
 3. Bump `metadata.version` in `marketplace.json`.
 4. Add a CHANGELOG entry under the new marketplace version.
-5. If skills/commands were added, renamed, or removed: update the README tables and the plugin's discovery command catalog (e.g. `commands/hard-parts.md`).
+5. If skills/commands were added, renamed, or removed: update the README tables and the discovery command catalog (`commands/skills.md`).
 6. Commit (normal commit, no history rewriting since the repo is public) and push. Pushing to `main` is the release.
 7. Tag the commit `v<marketplace-version>` (e.g. `v1.1.3`) and push the tag, then create/update the matching GitHub Release with notes (the first release covered the whole history to date; subsequent ones can scope notes to what changed since the last tag, linking `CHANGELOG.md` for full detail). This is discoverability only (installs/updates read `marketplace.json`/`plugin.json` directly, not tags or releases), but do it every time so it doesn't silently fall behind. `gh` in this environment is not authenticated to the repo's actual GitHub host; create the tag with plain git, then either paste notes into `https://github.com/tamasbege/staff-engineer-skills/releases/new?tag=<tag>` or ask the user to auth `gh` to that host first.
 
