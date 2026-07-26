@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.3 — 2026-07-26
+
+- README: added an "Updates" section explaining how installed users receive new versions (`/plugin marketplace update` + update/reinstall via `/plugin`), and that manual-copy installs must re-copy. No plugin content changed.
+
 ## 1.1.2 — 2026-07-26
 
 - Bumped `review-toolkit` to 1.0.1 — its version should have been bumped at 1.1.1 when the blind-spot-breaker rename changed the plugin's content, so installed copies would see it as an update. Versioning scheme, for the record: each plugin versions independently (that's what drives install/update detection); the marketplace `metadata.version` and this changelog track the repo as a whole and bump on any noteworthy change.

@@ -12,6 +12,7 @@ A Claude Code **plugin marketplace** for the hard, production-critical parts of 
   - [`review-toolkit`](#review-toolkit)
   - [`frontend-hard-parts`](#frontend-hard-parts)
 - [Installation](#installation)
+- [Updates](#updates)
 - [How they're invoked](#how-theyre-invoked)
 - [Output format](#output-format)
 - [License](#license)
@@ -88,6 +89,18 @@ cp -r staff-engineer-skills/plugins/review-toolkit/skills/* ~/.claude/skills/
 cp -r staff-engineer-skills/plugins/frontend-hard-parts/skills/* ~/.claude/skills/
 # or per project, same paths into /path/to/project/.claude/skills/
 ```
+
+## Updates
+
+Every change here ships with a version bump, so installed plugins can pick it up cleanly:
+
+```
+/plugin marketplace update staff-engineer-skills
+```
+
+then update the plugin(s) from the `/plugin` menu (Manage plugins) — or simply reinstall with `/plugin install <name>`, which always fetches the latest version. What changed in each release is in [CHANGELOG.md](CHANGELOG.md).
+
+If you installed via Option B (manual copy), there is no update mechanism — `git pull` and re-copy the skill folders.
 
 ## How they're invoked
 
