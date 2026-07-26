@@ -5,6 +5,17 @@
 
 A Claude Code **plugin marketplace** for the hard, production-critical parts of backend engineering — add the marketplace once, then install whichever plugins you need. 🚀
 
+## 📑 Contents
+
+- [📦 Plugins](#-plugins)
+  - [🔩 `the-hard-parts`](#-the-hard-parts)
+  - [🕵️ `review-toolkit`](#-review-toolkit)
+  - [🎨 `frontend-hard-parts`](#-frontend-hard-parts)
+- [⚙️ Installation](#-installation)
+- [🧭 How they're invoked](#-how-theyre-invoked)
+- [📄 Output format](#-output-format)
+- [📜 License](#-license)
+
 ## 📦 Plugins
 
 ### 🔩 `the-hard-parts`
