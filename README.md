@@ -27,6 +27,27 @@ Eight senior-specialist [Agent Skills](https://code.claude.com/docs/en/skills) f
 - `/hard-parts` — lists the skills and matches your problem to the right one
 - `/normalize-api` · `/optimize-cold-start` · `/design-event-pipeline` · `/harden-idempotency` · `/design-rate-limits` · `/design-resilience` · `/design-caching` · `/design-auth`
 
+### 🕵️ `review-toolkit`
+
+Adversarial, persona-driven review skills — the antidote to the self-review blind spot.
+
+| Skill | What it produces | Use when |
+|---|---|---|
+| 🥷 **adversarial-code-reviewer** | A structured review (`BLOCK`/`CONCERNS`/`CLEAN`) from four hostile personas — Saboteur, New Hire, Security Auditor, and an On-Call Engineer persona focused on production operability (logging, alerting, rollback safety) | Before merging a PR, when a review feels like a rubber stamp, or you want a genuinely harsh second opinion |
+
+**🎯 Slash command:** `/adversarial-review` (supports `--diff <ref>`, `--file <path>`, or a PR number)
+
+### 🎨 `frontend-hard-parts`
+
+Frontend craft and usability skills — currently expressive motion design and adversarial UX review, with more planned.
+
+| Skill | What it produces | Use when |
+|---|---|---|
+| 💫 **expressive-motion-architect** | Bold interaction/motion design: spring-physics choreography, shape morphing, dynamic color moments, and emphasized typography — implemented across Compose, Flutter, and the web (filling the gap Material's own Expressive spec leaves on web) | A UI feels flat or "default Material," or you want spring animations, shape morphing, or a signature interaction moment |
+| 🔎 **ux-reviewer** | An adversarial usability review (`DO NOT SHIP`/`SHIP WITH FIXES`/`SHIP`) from four user personas plus a Nielsen heuristics sweep | Reviewing a design/flow before dev handoff, or auditing a shipped screen for usability gaps |
+
+**🎯 Slash commands:** `/frontend-hard-parts` (discovery) · `/expressive-motion` · `/ux-review`
+
 *More plugins may be added to this marketplace over time.* ✨
 
 ## ⚙️ Installation
@@ -38,6 +59,8 @@ In Claude Code:
 ```
 /plugin marketplace add tamasbege/staff-engineer-skills
 /plugin install the-hard-parts
+/plugin install review-toolkit
+/plugin install frontend-hard-parts
 ```
 
 This gives you one-command install, version tracking, and updates when the repo changes. The marketplace is just this repo — no separate infrastructure.
@@ -48,10 +71,11 @@ The skills are plain `SKILL.md` folders, so you can also just copy them in:
 
 ```bash
 git clone https://github.com/tamasbege/staff-engineer-skills.git
-# personal (all projects):
+# personal (all projects) — copy whichever plugin's skills you want:
 cp -r staff-engineer-skills/plugins/the-hard-parts/skills/* ~/.claude/skills/
-# or per project:
-cp -r staff-engineer-skills/plugins/the-hard-parts/skills/* /path/to/project/.claude/skills/
+cp -r staff-engineer-skills/plugins/review-toolkit/skills/* ~/.claude/skills/
+cp -r staff-engineer-skills/plugins/frontend-hard-parts/skills/* ~/.claude/skills/
+# or per project, same paths into /path/to/project/.claude/skills/
 ```
 
 ## 🧭 How they're invoked

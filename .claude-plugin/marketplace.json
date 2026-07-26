@@ -6,13 +6,23 @@
   },
   "metadata": {
     "description": "Senior-specialist skills for designing and building production-hardened backend systems.",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
       "name": "the-hard-parts",
       "source": "./plugins/the-hard-parts",
       "description": "Eight senior-specialist skills for the hard parts of backend systems: API response normalization, cold-start optimization, event pipelines, idempotency, rate limiting, resilience, caching strategy, and auth flows. Each produces an HTML/Markdown design document plus real implementation artifacts (code, DDL, IaC, tests). Ships per-skill slash commands and a /hard-parts discovery command."
+    },
+    {
+      "name": "review-toolkit",
+      "source": "./plugins/review-toolkit",
+      "description": "Adversarial, persona-driven review skills. Ships adversarial-code-reviewer (four hostile personas, including an on-call/operability persona) with a /adversarial-review command."
+    },
+    {
+      "name": "frontend-hard-parts",
+      "source": "./plugins/frontend-hard-parts",
+      "description": "Senior-specialist frontend skills: expressive-motion-architect (bold spring-physics/shape-morph/motion design across Compose, Flutter, and web) and ux-reviewer (adversarial, persona-driven usability review). Ships /expressive-motion, /ux-review, and a /frontend-hard-parts discovery command."
     }
   ]
 }

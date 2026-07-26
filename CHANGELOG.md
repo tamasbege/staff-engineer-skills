@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.1.0 — 2026-07-26
+
+Two new plugins, validating the multi-plugin marketplace layout for the first time.
+
+### `review-toolkit` (new plugin)
+
+- **adversarial-code-reviewer** — four-persona adversarial review (Saboteur, New Hire, Security Auditor, and a new **On-Call Engineer** persona focused on production operability: logging, alerting, rollback safety — the class of finding most adversarial reviewers skip). `/adversarial-review` command.
+
+### `frontend-hard-parts` (new plugin)
+
+- **expressive-motion-architect** — bold interaction/motion design (spring physics, shape morphing, dynamic color, emphasized typography) across Compose, Flutter, and web. Explicitly fills the gap the installed `material-3` skill flags but doesn't solve: M3 Expressive has no implementation in `@material/web`. Complements rather than duplicates `material-3` (that skill owns tokens/compliance; this one owns the motion/interaction layer on top).
+- **ux-reviewer** — adversarial, persona-driven usability review (First-Time User, Impatient Power User, Accessibility User, Anxious/Error-Prone User) plus a Nielsen heuristics sweep. Distinct from the installed `ux-researcher-designer` skill: that one generates personas/research from data; this one critiques an existing design against fixed archetypes.
+- `/frontend-hard-parts` discovery command, `/expressive-motion`, `/ux-review`.
+
+### Authoring & review
+
+Both plugins went through the same process as 1.0.0: drafted, then adversarial review. Fixes this pass caught:
+
+- **adversarial-code-reviewer** — the verdict rule left a gap where a single WARNING (defined as "likely to cause bugs") would still render CLEAN; tightened so CLEAN requires zero warnings, not just fewer than two.
+- **expressive-motion-architect** — corrected a real technical inaccuracy: Flutter's `Path.combine` performs boolean path operations (union/difference/intersect), not shape interpolation — the prose claimed it could be used for morphing, contradicting the skill's own (correct) implementation table. Replaced with `ShapeBorderTween` / `Path.computeMetrics()`-based interpolation. Also added a browser-support caveat to the CSS `linear()` spring-easing approximation, matching the rigor already given to the shape-morph section.
+- **ux-reviewer** — fixed a garbled touch-target citation that merged two different standards' numbers into one invalid "44×48px" figure; replaced with the three actual sources (WCAG 2.5.8, Apple HIG, Material) and their real values. Same verdict-threshold gap as the code reviewer, fixed the same way.
+
+### Reference
+
+- Added `CONTRIBUTING.md`, which states the actual security model for this repo: skill files are executable agent instructions, so every PR is read in full before merge — there is no automated scanner that reliably catches malicious prompt content.
+
 ## 1.0.0 — 2026-07-26
 
 Initial release: the `the-hard-parts` plugin, published via the self-hosted `staff-engineer-skills` marketplace.
