@@ -1,24 +1,24 @@
-# 🛠️ staff-engineer-skills
+# staff-engineer-skills
 
 [![License: MIT](https://img.shields.io/github/license/tamasbege/staff-engineer-skills)](LICENSE)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin%20Marketplace-5A67D8)](https://code.claude.com/docs/en/skills)
 
-A Claude Code **plugin marketplace** for the hard, production-critical parts of backend engineering — add the marketplace once, then install whichever plugins you need. 🚀
+A Claude Code **plugin marketplace** for the hard, production-critical parts of backend engineering — add the marketplace once, then install whichever plugins you need.
 
-## 📑 Contents
+## Contents
 
-- [📦 Plugins](#-plugins)
-  - [🔩 `the-hard-parts`](#-the-hard-parts)
-  - [🕵️ `review-toolkit`](#-review-toolkit)
-  - [🎨 `frontend-hard-parts`](#-frontend-hard-parts)
-- [⚙️ Installation](#-installation)
-- [🧭 How they're invoked](#-how-theyre-invoked)
-- [📄 Output format](#-output-format)
-- [📜 License](#-license)
+- [Plugins](#plugins)
+  - [`the-hard-parts`](#the-hard-parts)
+  - [`review-toolkit`](#review-toolkit)
+  - [`frontend-hard-parts`](#frontend-hard-parts)
+- [Installation](#installation)
+- [How they're invoked](#how-theyre-invoked)
+- [Output format](#output-format)
+- [License](#license)
 
-## 📦 Plugins
+## Plugins
 
-### 🔩 `the-hard-parts`
+### `the-hard-parts`
 
 Eight senior-specialist [Agent Skills](https://code.claude.com/docs/en/skills) for backend correctness and reliability under failure, retry, and load. Each skill runs a staff-engineer workflow: it gathers context (inspecting your codebase first where possible), applies a battle-tested reference design, and hands back **both** a polished deliverable document (**HTML by default, or Markdown** — you're asked at the start) **and** real implementation artifacts (code, DDL, IaC, tests) written into your project.
 
@@ -33,12 +33,12 @@ Eight senior-specialist [Agent Skills](https://code.claude.com/docs/en/skills) f
 | 🗃️ **caching-strategy-architect** | Caching architecture: placement (L1/L2/HTTP), pattern selection, TTL + invalidation design, stampede protection, consistency guarantees | High DB load, stale-after-write bugs, cache/DB disagreement, thundering herds |
 | 🔐 **auth-flow-architect** | Auth architecture: OAuth2/OIDC flow selection, token matrix, refresh rotation + reuse detection, BFF pattern, RBAC/tenancy model, migration plan | Building login, sessions vs JWTs, IdP integration, token storage questions, multi-tenant auth |
 
-**🎯 Slash commands** — every skill has an explicit launcher, plus a discovery command:
+**Slash commands** — every skill has an explicit launcher, plus a discovery command:
 
 - `/hard-parts` — lists the skills and matches your problem to the right one
 - `/normalize-api` · `/optimize-cold-start` · `/design-event-pipeline` · `/harden-idempotency` · `/design-rate-limits` · `/design-resilience` · `/design-caching` · `/design-auth`
 
-### 🕵️ `review-toolkit`
+### `review-toolkit`
 
 Adversarial, persona-driven review skills — the antidote to the self-review blind spot.
 
@@ -46,9 +46,9 @@ Adversarial, persona-driven review skills — the antidote to the self-review bl
 |---|---|---|
 | 🥷 **blind-spot-breaker** | A structured review (`BLOCK`/`CONCERNS`/`CLEAN`) from four hostile personas — Saboteur, New Hire, Security Auditor, and an On-Call Engineer persona focused on production operability (logging, alerting, rollback safety) | Before merging a PR, when a review feels like a rubber stamp, or you want a genuinely harsh second opinion |
 
-**🎯 Slash command:** `/adversarial-review` (supports `--diff <ref>`, `--file <path>`, or a PR number)
+**Slash command:** `/adversarial-review` (supports `--diff <ref>`, `--file <path>`, or a PR number)
 
-### 🎨 `frontend-hard-parts`
+### `frontend-hard-parts`
 
 Frontend craft and usability skills — currently expressive motion design and adversarial UX review, with more planned.
 
@@ -57,13 +57,13 @@ Frontend craft and usability skills — currently expressive motion design and a
 | 💫 **expressive-motion-architect** | Bold interaction/motion design: spring-physics choreography, shape morphing, dynamic color moments, and emphasized typography — implemented across Compose, Flutter, and the web (filling the gap Material's own Expressive spec leaves on web) | A UI feels flat or "default Material," or you want spring animations, shape morphing, or a signature interaction moment |
 | 🔎 **ux-reviewer** | An adversarial usability review (`DO NOT SHIP`/`SHIP WITH FIXES`/`SHIP`) from four user personas plus a Nielsen heuristics sweep | Reviewing a design/flow before dev handoff, or auditing a shipped screen for usability gaps |
 
-**🎯 Slash commands:** `/frontend-hard-parts` (discovery) · `/expressive-motion` · `/ux-review`
+**Slash commands:** `/frontend-hard-parts` (discovery) · `/expressive-motion` · `/ux-review`
 
-*More plugins may be added to this marketplace over time.* ✨
+*More plugins may be added to this marketplace over time.*
 
-## ⚙️ Installation
+## Installation
 
-### 🔌 Option A — install as a plugin (recommended)
+### Option A — install as a plugin (recommended)
 
 In Claude Code:
 
@@ -76,7 +76,7 @@ In Claude Code:
 
 This gives you one-command install, version tracking, and updates when the repo changes. The marketplace is just this repo — no separate infrastructure.
 
-### 📋 Option B — copy the skills manually
+### Option B — copy the skills manually
 
 The skills are plain `SKILL.md` folders, so you can also just copy them in:
 
@@ -89,14 +89,14 @@ cp -r staff-engineer-skills/plugins/frontend-hard-parts/skills/* ~/.claude/skill
 # or per project, same paths into /path/to/project/.claude/skills/
 ```
 
-## 🧭 How they're invoked
+## How they're invoked
 
 Claude Code discovers skills automatically from their `description` frontmatter — just describe your problem ("our endpoints all return different error shapes", "Lambda cold starts are killing us", "prevent duplicate charges on retry") or invoke one explicitly (e.g. `/idempotency-builder`).
 
-## 📄 Output format
+## Output format
 
 Every skill asks one question up front: **HTML (default) or Markdown?** The design deliverable is written as a single self-contained file (suggested location: `docs/`) meant for humans — inline CSS, table of contents, styled tables and code blocks. Implementation artifacts (DDL, middleware, IaC, config) are additionally written to real source files when you want them applied.
 
-## 📜 License
+## License
 
 MIT — see [LICENSE](LICENSE).
