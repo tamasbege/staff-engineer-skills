@@ -23,7 +23,7 @@ Show them this catalog, then ask which problem they're facing (or match their de
 
 | Skill | Solves | Typical symptoms |
 |---|---|---|
-| **blind-spot-breaker** (`/adversarial-review`) | Self-review blind spots | Before merging a PR; a review feels like a rubber stamp; want a genuinely harsh second opinion |
+| **blindspot-finder** (`/find-blind-spots`) | Self-review blind spots | Before merging a PR; a review feels like a rubber stamp; want a genuinely harsh second opinion |
 
 **Frontend craft**
 

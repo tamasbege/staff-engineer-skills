@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 (2026-07-26)
+
+Renamed `blind-spot-breaker` to `blindspot-finder`. Its slash command, `/adversarial-review`, is renamed to `/find-blind-spots` to match (the old name was leftover branding from before the skill itself was renamed off "adversarial"). Content and behavior are unchanged; only names.
+
+**If you had the plugin installed:** `/plugin marketplace update staff-engineer-skills`, then reinstall or update via the `/plugin` menu to pick up the rename.
+
 ## 1.2.0 (2026-07-26)
 
 Merged `the-hard-parts`, `review-toolkit`, and `frontend-hard-parts` into a single plugin, `staff-engineer-skills`, matching the marketplace name. All 11 skills and 11 slash commands are unchanged in content; only the packaging changed.

@@ -1,11 +1,11 @@
 ---
-name: blind-spot-breaker
-description: Adversarial code review that breaks the self-review blind spot by forcing four hostile perspective shifts before rendering a verdict. Use when reviewing a diff or PR before merge, when a review feels like it's about to be a rubber stamp, when Claude just said "looks good" and a second, harsher opinion is wanted, or after a long session where fatigue may be hiding bugs. Covers correctness/robustness, maintainability, security, and production operability (logging, alerting, rollback safety) — the last of which most adversarial reviewers skip.
+name: blindspot-finder
+description: Adversarial code review that finds the self-review blind spot by forcing four hostile perspective shifts before rendering a verdict. Use when reviewing a diff or PR before merge, when a review feels like it's about to be a rubber stamp, when Claude just said "looks good" and a second, harsher opinion is wanted, or after a long session where fatigue may be hiding bugs. Covers correctness/robustness, maintainability, security, and production operability (logging, alerting, rollback safety) — the last of which most adversarial reviewers skip.
 ---
 
-# Blind Spot Breaker
+# Blindspot Finder
 
-When you review code you just wrote (or just read), your judgment shares the same mental model that produced it — you notice what you expected to see, not what's actually there. This skill breaks that by forcing four hostile personas, each with a different fear and a different definition of "broken," and requiring every one of them to find something. There is no "LGTM" exit.
+When you review code you just wrote (or just read), your judgment shares the same mental model that produced it — you notice what you expected to see, not what's actually there. This skill finds what that blind spot hides by forcing four hostile personas, each with a different fear and a different definition of "broken," and requiring every one of them to find something. There is no "LGTM" exit.
 
 **Credit:** the three-persona structure (Saboteur, New Hire, Security Auditor) and the severity-promotion mechanic are adapted from the `adversarial-reviewer` skill in Alireza Rezvani's [claude-skills](https://github.com/alirezarezvani/claude-skills) `engineering-skills` plugin (MIT licensed). This version is an independent rewrite in this repo's house style, with a fourth persona (The On-Call Engineer, for production operability) added.
 

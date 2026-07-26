@@ -1,6 +1,6 @@
 {
   "name": "staff-engineer-skills",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Eleven senior-specialist skills for the hard, production-critical parts of software engineering: backend reliability (API contracts, cold starts, event pipelines, idempotency, rate limiting, resilience, caching, auth), adversarial code review, and frontend craft (expressive motion, adversarial UX review). Each skill gathers context (inspecting your codebase first), applies a battle-tested reference design, and produces real deliverables. Design-and-build skills additionally produce an HTML or Markdown design document. Includes per-skill slash commands and a /skills discovery command.",
   "author": {
     "name": "tamasbege",
