@@ -28,8 +28,10 @@ Do NOT use this skill for: making retried operations safe to repeat (that's idem
 
 Before or together with context gathering, ask the user one question: should the final design document be **HTML** (default) or **Markdown**?
 
-- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets or CDN links), a linked table of contents, styled tables (dependency policy matrix, anti-patterns), `<pre><code>` blocks for config/code, readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
-- **Markdown** — produce a single `.md` file with the same structure.
+- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets, CDN links, or `<script>` tags), a linked table of contents, styled tables (dependency policy matrix, anti-patterns), `<pre><code>` blocks for config/code, diagrams as inline SVG (see below), readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
+- **Markdown** — produce a single `.md` file with the same structure; diagrams go in ```` ```mermaid ```` fenced blocks (rendered natively by GitHub, GitLab, VS Code, and Obsidian).
+
+**Diagrams (both formats):** author every diagram (timeout budget tree, breaker state machine) in Mermaid as the source of truth. Markdown output embeds the Mermaid block directly. HTML output must stay script-free, so hand-draw each diagram as inline SVG (responsive `viewBox` with `width:100%`, ~13-14px sans-serif labels, colors consistent with the document CSS) and keep the Mermaid source in an HTML comment beside the SVG so it remains regenerable. Never emit ASCII-art diagrams. Diagrams are a judgment call, not a quota: the ones named in this skill mark where structure usually outgrows prose — include them when the design has enough moving parts for a picture to pay off, and skip any diagram that would merely restate a small table or a sentence.
 
 If the user doesn't state a preference or says "default", use HTML. Write the deliverable to a file (suggest `docs/resilience-design.html` or `.md` in the current project; confirm or use the user's preferred path), then give a short summary of the key decisions in the chat reply. Config and code additionally go into real source files where the user wants them — the document embeds copies for reading.
 
@@ -106,6 +108,20 @@ resilience4j:
 
 Composition order (innermost to outermost): **timeout → circuit breaker → retry → bulkhead**. The timeout bounds each individual attempt (so the breaker's slow-call stats see per-attempt latency). Retries re-enter through the breaker — an open circuit fast-fails the attempt, and the open-circuit exception (`CallNotPermittedException`) is deliberately absent from `retryExceptions` so those rejections are not retried. The bulkhead is outermost and caps total concurrency including retries.
 
+### Breaker State Machine (per dependency, with THIS dependency's numbers)
+
+A generic textbook state diagram is noise — the transitions must carry the dependency's actual thresholds from its profile:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Closed
+    Closed --> Open: ≥50% failures OR ≥30% slow calls (>1.5s) over last 20 calls, min 10
+    Open --> HalfOpen: after 20s (staggered across instances)
+    HalfOpen --> Closed: 3 probe calls succeed
+    HalfOpen --> Open: any probe fails or is slow
+    note right of Open: reject instantly with PAYMENT_UNAVAILABLE, alert on-call
+```
+
 ---
 
 ## Phase 3: Design Output Structure
@@ -121,7 +137,7 @@ Flag every dependency the user *believes* is critical but could be made degradab
 
 ### 3.2 Timeout Budgets
 
-- Start from the caller's own SLO and decompose downward: if the service promises p99 3s and does sequential calls A then B, A + B + own work must fit in 3s. Draw the budget tree.
+- Start from the caller's own SLO and decompose downward: if the service promises p99 3s and does sequential calls A then B, A + B + own work must fit in 3s. Draw the budget tree as a diagram (Mermaid `flowchart TD`) when the chain has multiple calls or levels: root node = the service with its SLO, one child per call with its budget and configured timeouts, e.g. `checkout p99 3000ms → own work 300ms · inventory 700ms (timeout 600ms) · payment 2000ms (connect 500ms, total 2s)`. A single-dependency budget is one row in the profile table — no diagram needed.
 - Every remote call gets TWO timeouts: **connect** (short, 100-500ms — a host that won't accept a connection won't get better) and **total/read** (based on the dependency's real p99 plus margin, NOT a round number).
 - **Deadline propagation** where the stack supports it (gRPC deadlines, context cancellation, `X-Request-Deadline` header): a callee should stop working when the caller has already given up.
 - Rule: a callee's timeout must be shorter than its caller's, at every level. Verify the chain end-to-end and flag violations.
@@ -145,6 +161,7 @@ Retries are the most dangerous tool in this kit. For each dependency:
 - `minimumNumberOfCalls` so low-traffic periods don't flap the breaker on one failure.
 - Half-open: few probe calls; stagger the open-state wait across instances (config-level jitter where the library supports it, otherwise deployment skew usually suffices) — the point is that a whole fleet must not probe the recovering dependency at the same instant.
 - Define the **open-state behavior** per dependency: instant fallback (degradable) or instant structured error (critical). An open breaker is a feature, not an error to hide.
+- Include the breaker state machine as a diagram (Phase 2 format) with the dependency's actual thresholds on the transitions — one diagram per distinct breaker configuration (dependencies sharing identical thresholds may share a diagram, listed by name).
 - Breaker state changes are events: log + metric + alert on open.
 
 ### 3.5 Bulkheads and Isolation

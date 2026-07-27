@@ -28,8 +28,8 @@ Do NOT use this skill for: penetration testing an existing implementation (secur
 
 Before or together with context gathering, ask the user one question: should the final design document be **HTML** (default) or **Markdown**?
 
-- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets or CDN links), a linked table of contents, styled tables (token matrix, flow decisions), `<pre><code>` blocks for sequence flows/config/claims, readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
-- **Markdown** — produce a single `.md` file with the same structure.
+- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets, CDN links, or `<script>` tags), a linked table of contents, styled tables (token matrix, flow decisions), `<pre><code>` blocks for config/claims/code, sequence diagrams rendered as inline SVG (see 3.6 for the drawing rules), readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
+- **Markdown** — produce a single `.md` file with the same structure; sequence diagrams go in ```` ```mermaid ```` fenced blocks (rendered natively by GitHub, GitLab, VS Code, and Obsidian).
 
 If the user doesn't state a preference or says "default", use HTML. Write the deliverable to a file (suggest `docs/auth-flow-design.html` or `.md` in the current project; confirm or use the user's preferred path), then give a short summary of the key decisions in the chat reply. Middleware/config code additionally goes into real source files where the user wants it — the document embeds copies for reading.
 
@@ -122,26 +122,33 @@ Decisions to make explicit:
 
 ### 3.6 Reference Sequence (produce for each client type in scope)
 
+Author every sequence in Mermaid `sequenceDiagram` syntax — that is the content source of truth in both output formats. How it lands in the document depends on the Phase 0 choice:
+
+- **Markdown output**: embed the Mermaid source directly as a ```` ```mermaid ```` fenced block. Never emit ASCII-art sequence diagrams.
+- **HTML output**: the document must stay self-contained with no `<script>`, so do NOT embed a Mermaid runtime. Instead, hand-draw each diagram as **inline SVG** from the Mermaid source, following these layout rules: one vertical dashed lifeline per participant with a labeled header box at top; solid arrowed lines for requests, dashed arrowed lines for responses; every arrow carries its message text horizontally above it; internal steps (token validation, session creation) as note boxes spanning the relevant lifeline with a distinct background fill; time flows top to bottom; use a `viewBox` with `width:100%; height:auto` so it scales, ~13-14px sans-serif labels, and colors consistent with the document's CSS. Keep the Mermaid source in an HTML comment immediately above each SVG so the diagram remains regenerable. If a sequence is too dense to draw legibly as SVG, split it into two diagrams rather than falling back to ASCII.
+
 Example — SPA + BFF login, at the depth expected:
 
-```
-Browser                BFF                        IdP                     API
-  |--- GET /login ------>|                          |                      |
-  |                      |-- 302 /authorize?code_challenge(PKCE)+state+nonce -->|
-  |<------------- redirect to IdP ---------------- -|                      |
-  |--------------- authenticates (MFA) ------------>|                      |
-  |<-- 302 cb?code+state |                          |                      |
-  |--- GET /cb?code ---->|                          |                      |
-  |                      |-- POST /token (code+verifier+client_secret) --->|
-  |                      |<-- access(15m) + refresh(rotating) + id_token --|
-  |                      | validate id_token (iss,aud,nonce,exp,sig)       |
-  |                      | create server session; store tokens server-side |
-  |<- Set-Cookie: __Host-session (httpOnly,Secure,SameSite=Lax)            |
-  |--- GET /api/orders (cookie) -->|                |                      |
-  |                      |-- Bearer access_token ------------------------->|
-  |                      |                          |   [JWT validated: sig/kid via JWKS,
-  |                      |                          |    alg allowlist, iss, aud, exp; then
-  |                      |                          |    tenant + permission checks]       
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant BFF
+    participant IdP
+    participant API
+    Browser->>BFF: GET /login
+    BFF-->>Browser: 302 IdP /authorize (PKCE code_challenge + state + nonce)
+    Browser->>IdP: follows redirect, authenticates (MFA)
+    IdP-->>Browser: 302 cb?code+state
+    Browser->>BFF: GET /cb?code
+    BFF->>IdP: POST /token (code + verifier + client_secret)
+    IdP-->>BFF: access (15m) + refresh (rotating) + id_token
+    Note over BFF: validate id_token (iss, aud, nonce, exp, sig)<br/>create server session, store tokens server-side
+    BFF-->>Browser: Set-Cookie __Host-session (httpOnly, Secure, SameSite=Lax)
+    Browser->>BFF: GET /api/orders (cookie)
+    BFF->>API: GET /api/orders (Bearer access_token)
+    Note over API: JWT validated: sig/kid via JWKS, alg allowlist,<br/>iss, aud, exp — then tenant + permission checks
+    API-->>BFF: 200 orders
+    BFF-->>Browser: 200 orders
 ```
 
 Also produce: the refresh sequence (with rotation + race handling), logout sequence (all three revocation legs), and the M2M sequence if in scope.
@@ -216,7 +223,7 @@ Hand back exactly these artifacts, compiled into the single HTML or Markdown doc
 
 1. **Flow decisions** — client-type → flow table with justifications and banned-flow statement
 2. **Token matrix** — every credential: format, lifetime, storage, revocation (Phase 3.2 format)
-3. **Sequence diagrams** — login, refresh (with race handling), logout, and M2M for every client type in scope
+3. **Sequence diagrams** — login, refresh (with race handling), logout, and M2M for every client type in scope; Mermaid blocks in Markdown output, inline SVG (per 3.6 rules) in HTML output
 4. **Claims schema** — access/ID token claims with types, sources, and volatility ruling (in-token vs server-checked)
 5. **Session & revocation policy** — timeouts, concurrency rule, step-up triggers, the revoke-user-now runbook
 6. **Authorization design** — scopes vs permissions split, tenant model, enforcement points

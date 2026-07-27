@@ -29,8 +29,10 @@ Do NOT use this skill for: HTTP asset caching / CDN configuration for static fil
 
 Before or together with context gathering, ask the user one question: should the final design document be **HTML** (default) or **Markdown**?
 
-- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets or CDN links), a linked table of contents, styled tables (data-class matrix, pattern comparison), `<pre><code>` blocks for code/config, readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
-- **Markdown** — produce a single `.md` file with the same structure.
+- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets, CDN links, or `<script>` tags), a linked table of contents, styled tables (data-class matrix, pattern comparison), `<pre><code>` blocks for code/config, diagrams as inline SVG (see below), readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
+- **Markdown** — produce a single `.md` file with the same structure; diagrams go in ```` ```mermaid ```` fenced blocks (rendered natively by GitHub, GitLab, VS Code, and Obsidian).
+
+**Diagrams (both formats):** author every diagram (layer topology, race sequences) in Mermaid as the source of truth. Markdown output embeds the Mermaid block directly. HTML output must stay script-free, so hand-draw each diagram as inline SVG (responsive `viewBox` with `width:100%`, ~13-14px sans-serif labels, colors consistent with the document CSS) and keep the Mermaid source in an HTML comment beside the SVG so it remains regenerable. Never emit ASCII-art diagrams. Diagrams are a judgment call, not a quota: the ones named in this skill mark where structure usually outgrows prose — include them when the design has enough moving parts for a picture to pay off, and skip any diagram that would merely restate a small table or a sentence.
 
 If the user doesn't state a preference or says "default", use HTML. Write the deliverable to a file (suggest `docs/caching-strategy.html` or `.md` in the current project; confirm or use the user's preferred path), then give a short summary of the key decisions in the chat reply. Implementation code additionally goes into real source files where the user wants it — the document embeds copies for reading.
 
@@ -100,7 +102,20 @@ function onProductUpdated(event):                 // consumer of the ProductUpda
     pubsub.publish("l1-invalidate", "prod:v2:" + event.productId)
 ```
 
-**Why DEL and not SET on update:** writing the new value into the cache from the update path races with concurrent cache-aside loaders — a loader that read the DB *before* your write can fill the cache *after* your SET, leaving the old value cached until TTL. Deleting forces the next reader to load fresh. (If update-in-place is required for hot keys, it needs a version/CAS check — design it explicitly or don't do it.)
+**Why DEL and not SET on update:** writing the new value into the cache from the update path races with concurrent cache-aside loaders — a loader that read the DB *before* your write can fill the cache *after* your SET, leaving the old value cached until TTL. Deleting forces the next reader to load fresh. (If update-in-place is required for hot keys, it needs a version/CAS check — design it explicitly or don't do it.) Show the race as a sequence diagram wherever the design must justify DEL-over-SET to reviewers:
+
+```mermaid
+sequenceDiagram
+    participant Loader as Reader (cache-aside loader)
+    participant Writer
+    participant Cache
+    participant DB
+    Loader->>DB: read product (price = 10)
+    Writer->>DB: UPDATE price = 12, COMMIT
+    Writer->>Cache: SET price = 12
+    Loader->>Cache: fill price = 10
+    Note over Cache: stale value 10 wins — cached until TTL.<br/>With DEL instead of SET, the next reader reloads 12.
+```
 
 ---
 
@@ -115,6 +130,17 @@ Decide per data class; justify against latency, consistency, and fleet size:
 - **L1 + L2**: for hot-key skew (protects Redis itself from hot-key saturation). Rule: L1 TTL ≤ ½ of L2 TTL, and L1 must subscribe to invalidation broadcasts.
 - **HTTP layer** (CDN/gateway with `Cache-Control`/`ETag`/`Vary`): for anonymous, shared responses only. Never cache per-user responses at a shared HTTP layer without an exact `Vary` contract — this is how session-leak incidents happen.
 - **Materialized views / replica reads**: when the "cache" is really a precomputed query, prefer DB-native materialization over hand-rolled cache maintenance.
+
+When the design has more than one layer or any invalidation path beyond TTL, close this section with one layer topology diagram (Mermaid `flowchart LR`): the read path through every chosen layer with its TTL, and every invalidation path (write event → DEL in L2 → pub/sub broadcast to L1s), e.g.:
+
+```mermaid
+flowchart LR
+    R[request] --> L1["L1 in-process (Caffeine, 5s TTL)"]
+    L1 -->|miss| L2[("L2 Redis (10s TTL ± 20%)")]
+    L2 -->|miss, single-flight| DB[(PostgreSQL)]
+    EV[ProductUpdated event] -->|DEL| L2
+    EV -->|pub/sub broadcast| L1
+```
 
 ### 3.2 Pattern Selection
 
@@ -228,7 +254,7 @@ Every design you produce must satisfy these. Verify each before delivering:
 Hand back exactly these artifacts, compiled into the single HTML or Markdown document chosen in Phase 0 (code additionally into real source files where the user wants it):
 
 1. **Data-class matrix** — one entry per class in the Phase 2 format
-2. **Placement & pattern decisions** — layers and pattern per class with tradeoffs stated
+2. **Placement & pattern decisions** — layers and pattern per class with tradeoffs stated, plus the layer topology diagram (read path + every invalidation path)
 3. **Key schema & TTL table** — schema, versioning, TTLs with jitter, negative-cache policy, memory projection
 4. **Invalidation design** — trigger list per class, event/CDC wiring, L1 broadcast design
 5. **Consistency notes** — race handling and read-your-own-writes decision per class

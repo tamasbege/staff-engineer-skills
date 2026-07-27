@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.2 (2026-07-27)
+
+Five design skills now produce real diagrams instead of ASCII art or prose-only descriptions, under one shared convention: every diagram is authored in Mermaid as the source of truth; Markdown output embeds it as a ```` ```mermaid ```` block (rendered natively by GitHub, GitLab, VS Code, Obsidian), and HTML output hand-draws it as inline SVG with the Mermaid source preserved in an HTML comment, keeping the document fully self-contained with no scripts or CDN dependencies. Diagrams are a judgment call, not a quota: each skill names its usual value points (topology, sequence, state machine) and scope-gates them, so trivial designs (single event addition, single dependency, single enforcement layer) don't get decorative diagrams. Plugin version 1.0.2.
+
+- **auth-flow-architect**: the 3.6 reference login sequence converted from ASCII art to a Mermaid sequence diagram; all sequence-diagram deliverables (login, refresh, logout, M2M) now follow the convention.
+- **event-pipeline-architect**: new pipeline topology diagram (producers → topics → consumers → DLQs, partition keys on edges) opening the event catalog, and an outbox-pattern sequence diagram accompanying the producer reference.
+- **resilience-strategist**: the timeout budget tree is now rendered as a diagram, and each distinct circuit-breaker configuration gets a state machine diagram carrying the dependency's actual thresholds.
+- **idempotency-builder**: the request-handling logic is additionally presented as a decision flowchart, and the saga section's arrow-text state machine is now a real state diagram covering all compensation transitions.
+- **caching-strategy-architect**: new layer topology diagram (read path with TTLs + every invalidation path) closing the placement section, and the DEL-vs-SET write race is illustrated as a sequence diagram.
+- **rate-limiter-designer**: new enforcement placement diagram (client → edge → middleware → store, rules and fail modes annotated per hop).
+
 ## 1.2.1 (2026-07-26)
 
 Renamed `blind-spot-breaker` to `blindspot-finder`. Its slash command, `/adversarial-review`, is renamed to `/find-blind-spots` to match (the old name was leftover branding from before the skill itself was renamed off "adversarial"). Content and behavior are unchanged; only names.

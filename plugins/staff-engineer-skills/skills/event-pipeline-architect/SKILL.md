@@ -15,8 +15,10 @@ Use this skill when: adding async processing between services, when actions have
 
 Before or together with context gathering, ask the user one question: should the final design document be **HTML** (default) or **Markdown**?
 
-- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets or CDN links), a linked table of contents, styled tables (event catalog, anti-patterns), `<pre><code>` blocks for schemas/pseudocode/IaC, readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
-- **Markdown** — produce a single `.md` file with the same structure.
+- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets, CDN links, or `<script>` tags), a linked table of contents, styled tables (event catalog, anti-patterns), `<pre><code>` blocks for schemas/pseudocode/IaC, diagrams as inline SVG (see below), readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
+- **Markdown** — produce a single `.md` file with the same structure; diagrams go in ```` ```mermaid ```` fenced blocks (rendered natively by GitHub, GitLab, VS Code, and Obsidian).
+
+**Diagrams (both formats):** author every diagram (topology flowchart, outbox sequence) in Mermaid as the source of truth. Markdown output embeds the Mermaid block directly. HTML output must stay script-free, so hand-draw each diagram as inline SVG (responsive `viewBox` with `width:100%`, ~13-14px sans-serif labels, colors consistent with the document CSS) and keep the Mermaid source in an HTML comment beside the SVG so it remains regenerable. Never emit ASCII-art diagrams. Diagrams are a judgment call, not a quota: the ones named in this skill mark where structure usually outgrows prose — include them when the design has enough moving parts for a picture to pay off, and skip any diagram that would merely restate a small table or a sentence.
 
 If the user doesn't state a preference or says "default", use HTML. Write the deliverable to a file (suggest `docs/event-pipeline-design.html` or `.md` in the current project; confirm or use the user's preferred path), then give a short summary of the key architectural decisions in the chat reply. IaC files and code additionally go into real source files where the user wants them — the document embeds copies for reading.
 
@@ -66,6 +68,22 @@ This section demonstrates the expected depth for every event you design. Produce
 | Idempotency key | `orderId` (consumers deduplicate on this) |
 | Ordering | Per-customer ordering (partition/session key = `customerId`) |
 | Schema version | `1.0.0` |
+
+### Topology Diagram
+
+Every design opens with one topology diagram covering all events in the catalog — producers, topics/queues, consumers, and DLQs, with partition/session keys on the edges:
+
+```mermaid
+flowchart LR
+    OS[order-service] -->|OrderPlaced, key: customerId| T[(orders topic)]
+    T --> INV[inventory-service]
+    T --> NOT[notification-service]
+    T --> BIL[billing-service]
+    INV -. "after 3 failed deliveries" .-> DLQ[(orders-dlq)]
+    NOT -. "after 3 failed deliveries" .-> DLQ
+    BIL -. "after 3 failed deliveries" .-> DLQ
+    DLQ -.->|alert| PD[on-call / PagerDuty]
+```
 
 ### Payload Schema
 
@@ -118,7 +136,24 @@ function placeOrder(orderRequest):
     //    On broker unavailable: relay retries with backoff — no data loss
 ```
 
-**Why outbox, not dual-write:** If you persist the order then publish separately, a crash between the two steps means the order exists but the event is lost (or vice versa). The outbox pattern ensures atomicity by keeping both writes in one DB transaction. The relay process handles broker failures independently.
+**Why outbox, not dual-write:** If you persist the order then publish separately, a crash between the two steps means the order exists but the event is lost (or vice versa). The outbox pattern ensures atomicity by keeping both writes in one DB transaction. The relay process handles broker failures independently. Include this sequence diagram (adapted to the user's services) whenever the design uses the outbox pattern:
+
+```mermaid
+sequenceDiagram
+    participant App as order-service
+    participant DB as Database (orders + outbox)
+    participant Relay as Outbox relay
+    participant Broker
+    participant Con as inventory-service
+    App->>DB: BEGIN — insert order + insert outbox row (PENDING)
+    App->>DB: COMMIT (both rows exist, or neither)
+    Relay->>DB: poll / CDC — read PENDING rows
+    Relay->>Broker: publish OrderPlaced
+    Broker-->>Relay: ack
+    Relay->>DB: mark outbox row SENT
+    Broker->>Con: deliver (at-least-once)
+    Note over Con: deduplicate on eventId, process, then ack
+```
 
 **Relay implementation options:**
 - **Polling**: Background job queries outbox table every N seconds for PENDING rows. Simple but adds latency (up to N seconds).
@@ -160,6 +195,8 @@ function handleOrderPlaced(message):
 Produce these sections in order. Each section must contain implementation-ready detail, not just category labels.
 
 ### 3.1 Event Catalog
+
+For scope B/C designs (new pipeline, redesign), open this section with the pipeline topology diagram (Phase 2 format): every producer, topic/queue, consumer, and DLQ in one flowchart, edges labeled with event names and partition/session keys. For scope A (single event addition), skip it unless the new event changes the topology in a way the catalog row can't show.
 
 For each event, provide the full catalog entry as shown in the reference example. Include:
 - Name, trigger (the business action with an example scenario)
@@ -354,6 +391,7 @@ Every design you produce must satisfy these. Verify each one before delivering o
 
 Before presenting your design — compiled into the single HTML or Markdown document chosen in Phase 0 — confirm you have delivered:
 
+- [ ] Pipeline topology diagram (producers → topics → consumers → DLQs, keys on edges) — scope B/C designs
 - [ ] Complete event catalog with payload schemas for every event
 - [ ] Producer implementation detail for every producing service
 - [ ] Consumer implementation detail for every consuming service

@@ -27,8 +27,10 @@ Do NOT use this skill for: load shedding under CPU/memory pressure (that's overl
 
 Before or together with context gathering, ask the user one question: should the final design document be **HTML** (default) or **Markdown**?
 
-- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets or CDN links), a linked table of contents, styled tables (limit matrix, algorithm comparison), `<pre><code>` blocks for code/config, readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
-- **Markdown** — produce a single `.md` file with the same structure.
+- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets, CDN links, or `<script>` tags), a linked table of contents, styled tables (limit matrix, algorithm comparison), `<pre><code>` blocks for code/config, diagrams as inline SVG (see below), readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
+- **Markdown** — produce a single `.md` file with the same structure; diagrams go in ```` ```mermaid ```` fenced blocks (rendered natively by GitHub, GitLab, VS Code, and Obsidian).
+
+**Diagrams (both formats):** author every diagram (enforcement placement) in Mermaid as the source of truth. Markdown output embeds the Mermaid block directly. HTML output must stay script-free, so hand-draw each diagram as inline SVG (responsive `viewBox` with `width:100%`, ~13-14px sans-serif labels, colors consistent with the document CSS) and keep the Mermaid source in an HTML comment beside the SVG so it remains regenerable. Never emit ASCII-art diagrams. Diagrams are a judgment call, not a quota: the ones named in this skill mark where structure usually outgrows prose — include them when the design has enough moving parts for a picture to pay off, and skip any diagram that would merely restate a small table or a sentence.
 
 If the user doesn't state a preference or says "default", use HTML. Write the deliverable to a file (suggest `docs/rate-limit-design.html` or `.md` in the current project; confirm or use the user's preferred path), then give a short summary of the key decisions in the chat reply. Implementation code (Lua scripts, middleware, gateway config) additionally goes into real source files where the user wants it — the document embeds copies for reading.
 
@@ -160,6 +162,15 @@ Decide and justify where each rule runs:
 - **Application middleware**: full identity context (user, tenant, plan tier), weighted costs, business quotas.
 - **Recommended**: both — a coarse protective limit at the edge, precise fairness/quota limits in middleware. Document which layer owns which rule so limits aren't double-counted.
 - **Local + distributed hybrid** (high scale): a small in-process bucket (absorbs micro-bursts, no network hop) in front of the shared Redis bucket (global accuracy). State the tradeoff: local buckets admit up to N×local-burst extra requests across N instances.
+- When enforcement spans more than one layer, close this section with a placement diagram: the request path from client through each enforcement hop to the store, annotated with which rules run where and each rule's fail mode (a single-layer design needs only a sentence), e.g.:
+
+```mermaid
+flowchart LR
+    C[client] --> E["edge / nginx — coarse per-IP ceiling (fail-open)"]
+    E --> M["app middleware — per-tenant + plan quotas, weighted costs (fail mode per rule)"]
+    M -.->|EVALSHA token bucket| RS[("Redis (noeviction, dedicated)")]
+    M --> App[application]
+```
 
 ### 4.3 Response Contract
 
@@ -250,7 +261,7 @@ Hand back exactly these artifacts, compiled into the single HTML or Markdown doc
 
 1. **Limit matrix** — every rule with algorithm, key, numbers, cost, fail mode, layer, and rationale
 2. **Algorithm decisions** — chosen algorithm per limit class with the tradeoff stated
-3. **Enforcement code** — atomic limiter (Lua script or equivalent) + middleware/gateway config in the user's stack
+3. **Enforcement code** — atomic limiter (Lua script or equivalent) + middleware/gateway config in the user's stack, plus the enforcement placement diagram from 4.2
 4. **Response contract** — 429 body, header convention, documented client backoff guidance
 5. **Quota design** — reset semantics, exhaustion behavior, enforcement/metering separation (if tiers exist)
 6. **Outbound limiter design** — shared bucket + provider 429 handling (if third-party APIs are called)

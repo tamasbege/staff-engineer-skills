@@ -11,8 +11,10 @@ You are a senior distributed systems engineer. Your job is to design and deliver
 
 Before or together with context gathering, ask the user one question: should the final design document be **HTML** (default) or **Markdown**?
 
-- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets or CDN links), a linked table of contents, styled tables (action map, test scenarios, anti-patterns), `<pre><code>` blocks for DDL/pseudocode/config, readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
-- **Markdown** — produce a single `.md` file with the same structure.
+- **HTML (default)** — produce a single self-contained `.html` file: inline CSS only (no external assets, CDN links, or `<script>` tags), a linked table of contents, styled tables (action map, test scenarios, anti-patterns), `<pre><code>` blocks for DDL/pseudocode/config, diagrams as inline SVG (see below), readable typography, and a generation date in the footer. It must render well when opened directly in a browser.
+- **Markdown** — produce a single `.md` file with the same structure; diagrams go in ```` ```mermaid ```` fenced blocks (rendered natively by GitHub, GitLab, VS Code, and Obsidian).
+
+**Diagrams (both formats):** author every diagram (request-handling flowchart, saga state machine) in Mermaid as the source of truth. Markdown output embeds the Mermaid block directly. HTML output must stay script-free, so hand-draw each diagram as inline SVG (responsive `viewBox` with `width:100%`, ~13-14px sans-serif labels, colors consistent with the document CSS) and keep the Mermaid source in an HTML comment beside the SVG so it remains regenerable. Never emit ASCII-art diagrams. Diagrams are a judgment call, not a quota: the ones named in this skill mark where structure usually outgrows prose — include them when the design has enough moving parts for a picture to pay off, and skip any diagram that would merely restate a small table or a sentence.
 
 If the user doesn't state a preference or says "default", use HTML. Write the deliverable to a file (suggest `docs/idempotency-design.html` or `.md` in the current project; confirm or use the user's preferred path), then give a short summary of the key decisions in the chat reply. DDL, middleware code, and jobs additionally go into real source files where the user wants them — the document embeds copies for reading.
 
@@ -114,6 +116,25 @@ function handleRequest(idempotencyKey, requestBody):
     catch transientError:
         releaseLock(idempotencyKey)
         throw   // caller may retry with same key
+```
+
+When the design is more than a trivial single-endpoint guard, the final document also presents this logic as a decision flowchart — reviewers scan the diagram, implementers read the pseudocode:
+
+```mermaid
+flowchart TD
+    A[request with idempotency key] --> B{"atomic upsert — key new?"}
+    B -->|new| E[execute action]
+    B -->|exists| C{"fingerprint matches?"}
+    C -->|no| X1["409 — key reused with different body"]
+    C -->|yes| D{"status?"}
+    D -->|COMPLETED| R[replay stored response]
+    D -->|PROCESSING, lock live| X2[409 — already in progress]
+    D -->|PROCESSING, lock expired| L[CAS reclaim lock]
+    L -->|won| E
+    L -->|lost| X2
+    E -->|success| M[mark COMPLETED, store response]
+    E -->|permanent error| F[mark FAILED, rethrow]
+    E -->|transient error| G[release lock, rethrow — retry allowed]
 ```
 
 ### Database Schema (Idempotency Store)
@@ -218,7 +239,19 @@ When the protected action is a composite (e.g., reserve inventory, charge paymen
 - Each step gets its own idempotency sub-key or is tracked in a step-status column
 - Define the compensation path if a middle step fails (reverse earlier steps)
 - The outer idempotency key covers the entire saga; retrying replays from the last incomplete step, not from the beginning
-- Include a state machine: `STEP_1_DONE → STEP_2_DONE → COMPLETED` or `STEP_2_FAILED → COMPENSATING → ROLLED_BACK`
+- Include the saga state machine as a diagram (Mermaid `stateDiagram-v2`) covering the happy path AND every compensation transition — a compensation path that isn't drawn is a compensation path that isn't designed:
+
+```mermaid
+stateDiagram-v2
+    [*] --> INVENTORY_RESERVED: reserve inventory
+    INVENTORY_RESERVED --> PAYMENT_CHARGED: charge payment
+    PAYMENT_CHARGED --> COMPLETED: confirm order
+    INVENTORY_RESERVED --> COMPENSATING: charge fails permanently
+    PAYMENT_CHARGED --> COMPENSATING: confirm fails permanently
+    COMPENSATING --> ROLLED_BACK: release inventory, refund if charged
+    COMPLETED --> [*]
+    ROLLED_BACK --> [*]
+```
 
 ### 8. Security
 
@@ -315,3 +348,4 @@ Hand back exactly these artifacts, compiled into the single HTML or Markdown doc
 7. **Monitoring config** — metric definitions and suggested alert thresholds
 8. **Build order** — numbered steps with deployment safety notes
 9. **Operational runbook** — covering: stuck PROCESSING records (identification query + manual release), split-brain detection (metrics spike + provider reconciliation), partition maintenance, provider/local state divergence reconciliation, key-flooding abuse response
+10. **Flow diagrams** — the request-handling decision flowchart (where the design warrants it), and the saga state machine if multi-step actions exist (Mermaid in Markdown output, inline SVG in HTML output)
