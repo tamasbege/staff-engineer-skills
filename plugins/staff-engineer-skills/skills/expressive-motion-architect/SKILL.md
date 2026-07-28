@@ -27,6 +27,27 @@ Ask the user: should the final design spec be **HTML** (default) or **Markdown**
 
 Default to HTML if unstated. Suggest `docs/expressive-motion-spec.html` (or `.md`); confirm or use the user's preferred path. Implementation snippets are additionally written into real source files where the user wants them applied — the doc embeds copies for reading.
 
+**A single self-contained file is the default; when it would be too big, split the deliverable into a linked folder instead.** Use the folder form when the finished spec would run past roughly 1,500 lines (~100 KB), when it covers more than about six interactions or top-level sections a reader would navigate between, or whenever the user asks for it. Below that, keep the single file — a short spec scattered across eight pages is worse than one page.
+
+```
+docs/expressive-motion-spec/
+  index.html                    overview, interaction inventory, full contents
+  01-physics-presets.html
+  02-<interaction-name>.html    one page per designed interaction
+  03-<interaction-name>.html
+  04-cross-platform-matrix.html
+  05-reduced-motion.html
+  assets/styles.css             one shared stylesheet (still no CDN, no JS, no webfonts)
+```
+
+- **Split on interaction or top-level section boundaries only** — never mid-section, and never separate a choreography table or code block from the prose explaining it. Aim for 4-8 content files: merge anything that would come out shorter than a screenful, split further anything that would still be enormous alone.
+- **Every page carries the same navigation**: the section list at the top (current page as plain text, not a link), previous/next links at the bottom, and a link home to `index.html`. `index.html` is the entry point — the interaction inventory with which levers each one uses, linking into its page, plus a pointer to which file holds each Final Deliverable.
+- **Relative links only** (`01-physics-presets.html#snappy`), so the folder works opened from disk, moved, zipped, or committed. Per-interaction pages should link back to the shared preset definitions instead of restating them. Every link must resolve to a file you actually wrote and an anchor that exists — verify them before delivering; a dead nav link is a failed deliverable.
+- **Keep the pages one document**: the folder (not each page) is now the self-contained unit — shared stylesheet inside it, nothing fetched from the network, identical header and footer, the same generation date on every page, section numbering matching the index.
+- **Markdown splits the same way**: `README.md` as the index plus `01-*.md` files, the same top nav line and previous/next footer, relative links.
+
+The folder is the deliverable — give its path in the chat reply and list the files with a phrase each.
+
 ## Context Gathering (mandatory before any output)
 
 1. **Platform(s)** — Compose/Android, Flutter, web (React/Vue/vanilla), or more than one (then parity across them matters).
@@ -135,7 +156,7 @@ Fill this in for every interaction you design — state "not supported, use fall
 
 ## Final Deliverables
 
-Compiled into the single HTML/Markdown document from Phase 0 (code additionally into real source files where wanted):
+Compiled into the HTML/Markdown deliverable from Phase 0 — one file, or the linked folder if it was split (code additionally into real source files where wanted):
 
 1. **Interaction inventory** — which UI moments are in scope, and which of the four levers each one uses
 2. **Physics/choreography spec** — named presets or explicit numbers, stagger deltas, duration budgets, per interaction

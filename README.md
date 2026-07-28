@@ -112,6 +112,8 @@ Claude Code discovers skills automatically from their `description` frontmatter:
 
 Design-and-build skills (everything under [Backend reliability](#backend-reliability), plus `expressive-motion-architect`) ask one question up front: **HTML (default) or Markdown?** The design deliverable is written as a single self-contained file (suggested location: `docs/`) meant for humans: inline CSS, table of contents, styled tables and code blocks. Implementation artifacts (DDL, middleware, IaC, config) are additionally written to real source files when you want them applied.
 
+Big designs are not crammed into one page. When a document would run past roughly 1,500 lines or more than about six navigable sections, the skill splits it into a folder instead: an `index.html` (or `README.md`) with the contents and a pointer to where each deliverable lives, one file per section, a shared stylesheet, and the same navigation on every page (section list at the top, previous/next at the bottom, link back to the index). Links are all relative, so the folder works opened from disk, moved, zipped, or committed. You can also just ask for the split form.
+
 `blindspot-finder` and `ux-reviewer` are review workflows, not design-and-build skills. They instead produce a structured verdict directly in chat (`BLOCK`/`CONCERNS`/`CLEAN` and `DO NOT SHIP`/`SHIP WITH FIXES`/`SHIP` respectively), built for fast, iterative review rather than a saved document.
 
 ## License

@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.3.0 (2026-07-28)
+
+All nine design-and-build skills can now split a large deliverable into a folder of interlinked pages instead of one enormous file. The trigger is a stated threshold rather than a judgment call: past roughly 1,500 lines (~100 KB) or more than about six navigable top-level sections, or whenever the user asks for it. Below that the single self-contained file stays the default, since a short design scattered across eight pages reads worse than one page. Plugin version 1.1.0.
+
+The folder form is specified identically in every skill, so the output is predictable whichever one you run:
+
+- `index.html` (or `README.md` in Markdown) as the entry point: scope, the full table of contents with a one-line summary per section, and a pointer to which file holds each final deliverable.
+- One file per top-level section, split on section boundaries only, never separating a table, diagram, or code block from the prose that explains it. Four to eight content files, merging anything shorter than a screenful.
+- The same navigation on every page: section list at the top with the current page shown as plain text, previous/next links at the bottom, link back to the index.
+- Relative links only, verified to resolve, so the folder works opened from disk, moved, zipped, or committed. A dead nav link counts as a failed deliverable.
+- One shared stylesheet in `assets/`, still with no CDN, no JavaScript, and no webfonts; identical header, footer, and generation date across pages so the set reads as one document.
+- Markdown splits the same way, with Mermaid diagram blocks unchanged.
+
+Each skill carries an example folder layout matching its own structure (event catalog and consumers for the pipeline skill, token matrix and sequences for auth, one page per interaction for motion, and so on), and the final-deliverables checklists now read "one file, or the linked folder if it was split." `blindspot-finder` and `ux-reviewer` are untouched: they are review workflows that output a verdict in chat, not a document.
+
 ## 1.2.2 (2026-07-27)
 
 Five design skills now produce real diagrams instead of ASCII art or prose-only descriptions, under one shared convention: every diagram is authored in Mermaid as the source of truth; Markdown output embeds it as a ```` ```mermaid ```` block (rendered natively by GitHub, GitLab, VS Code, Obsidian), and HTML output hand-draws it as inline SVG with the Mermaid source preserved in an HTML comment, keeping the document fully self-contained with no scripts or CDN dependencies. Diagrams are a judgment call, not a quota: each skill names its usual value points (topology, sequence, state machine) and scope-gates them, so trivial designs (single event addition, single dependency, single enforcement layer) don't get decorative diagrams. Plugin version 1.0.2.

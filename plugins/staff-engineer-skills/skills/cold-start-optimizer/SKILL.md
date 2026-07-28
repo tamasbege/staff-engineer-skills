@@ -20,6 +20,27 @@ Before or together with context gathering, ask the user one question: should the
 
 If the user doesn't state a preference or says "default", use HTML. Write the deliverable to a file (suggest `docs/cold-start-plan.html` or `.md` in the current project; confirm or use the user's preferred path), then give a short summary of the top-ranked recommendations in the chat reply.
 
+**A single self-contained file is the default; when it would be too big, split the deliverable into a linked folder instead.** Use the folder form when the finished plan would run past roughly 1,500 lines (~100 KB), when it has more than about six top-level sections a reader would navigate between, or whenever the user asks for it. Below that, keep the single file — a short plan scattered across eight pages is worse than one page.
+
+```
+docs/cold-start-plan/
+  index.html                      overview, full contents, ranked recommendation summary
+  01-baseline-and-targets.html
+  02-recommendations-p0.html
+  03-recommendations-p1.html
+  04-recommendations-backlog.html
+  05-measurement-and-regression.html
+  assets/styles.css               one shared stylesheet (still no CDN, no JS, no webfonts)
+```
+
+- **Split on top-level section boundaries only** — never mid-section, and never separate a table or code block from the prose explaining it, and never split a single recommendation across two files. Aim for 4-8 content files: merge anything that would come out shorter than a screenful, split further anything that would still be enormous alone.
+- **Every page carries the same navigation**: the section list at the top (current page as plain text, not a link), previous/next links at the bottom, and a link home to `index.html`. `index.html` is the entry point — baseline, targets, the ranked recommendation list linking into the detail pages, and a pointer to which file holds each Final Deliverable.
+- **Relative links only** (`02-recommendations-p0.html#route-level-code-splitting`), so the folder works opened from disk, moved, zipped, or committed. Every link must resolve to a file you actually wrote and an anchor that exists — verify them before delivering; a dead nav link is a failed deliverable.
+- **Keep the pages one document**: the folder (not each page) is now the self-contained unit — shared stylesheet inside it, nothing fetched from the network, identical header and footer, the same generation date on every page, continuous recommendation numbering matching the index.
+- **Markdown splits the same way**: `README.md` as the index plus `01-*.md` files, the same top nav line and previous/next footer, relative links.
+
+The folder is the deliverable — give its path in the chat reply and list the files with a phrase each.
+
 ---
 
 ## Context Gathering (mandatory before any output)
@@ -261,7 +282,7 @@ For each recommendation, use this structure:
 
 ## Final Deliverables
 
-The completed plan — compiled into the single HTML or Markdown document chosen at the start — must include all of the following:
+The completed plan — compiled into the HTML or Markdown deliverable chosen at the start, one file or the linked folder if it was split — must include all of the following:
 
 - [ ] Context summary (stack, deployment, baseline, goal)
 - [ ] Current state assessment with metrics (measured or assumed, clearly labeled)

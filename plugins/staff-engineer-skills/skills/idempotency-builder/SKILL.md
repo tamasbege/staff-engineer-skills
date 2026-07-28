@@ -18,6 +18,28 @@ Before or together with context gathering, ask the user one question: should the
 
 If the user doesn't state a preference or says "default", use HTML. Write the deliverable to a file (suggest `docs/idempotency-design.html` or `.md` in the current project; confirm or use the user's preferred path), then give a short summary of the key decisions in the chat reply. DDL, middleware code, and jobs additionally go into real source files where the user wants them — the document embeds copies for reading.
 
+**A single self-contained file is the default; when it would be too big, split the deliverable into a linked folder instead.** Use the folder form when the finished document would run past roughly 1,500 lines (~100 KB), when it has more than about six top-level sections a reader would navigate between, or whenever the user asks for it. Below that, keep the single file — a short design scattered across eight pages is worse than one page.
+
+```
+docs/idempotency-design/
+  index.html                      overview, action map, full contents
+  01-keys-and-fingerprints.html
+  02-request-handling.html
+  03-concurrency-and-recovery.html
+  04-payments-and-sagas.html
+  05-security-and-monitoring.html
+  06-tests-and-build-order.html
+  assets/styles.css               one shared stylesheet (still no CDN, no JS, no webfonts)
+```
+
+- **Split on top-level section boundaries only** — never mid-section, and never separate a table, diagram, DDL, or code block from the prose explaining it. Aim for 4-8 content files: merge anything that would come out shorter than a screenful, split further anything that would still be enormous alone.
+- **Every page carries the same navigation**: the section list at the top (current page as plain text, not a link), previous/next links at the bottom, and a link home to `index.html`. `index.html` is the entry point — the protected-action map, the full table of contents with a one-line summary per section, and a pointer to which file holds each Final Deliverable.
+- **Relative links only** (`03-concurrency-and-recovery.html#partial-failure`), so the folder works opened from disk, moved, zipped, or committed. Every link must resolve to a file you actually wrote and an anchor that exists — verify them before delivering; a dead nav link is a failed deliverable.
+- **Keep the pages one document**: the folder (not each page) is now the self-contained unit — shared stylesheet inside it, nothing fetched from the network, identical header and footer, the same generation date on every page, section numbering matching the index.
+- **Markdown splits the same way**: `README.md` as the index plus `01-*.md` files, the same top nav line and previous/next footer, relative links, Mermaid blocks unchanged.
+
+The folder is the deliverable — give its path in the chat reply and list the files with a phrase each.
+
 ## Context Gathering (Mandatory)
 
 Before producing any output, ask the user these questions. Do not skip this phase. If working inside a codebase, inspect it first (endpoints, payment integrations, message consumers) and only ask what the code cannot answer.
@@ -337,7 +359,7 @@ Every output must satisfy these. If any cannot be met, explain why and propose a
 
 ## Final Deliverables
 
-Hand back exactly these artifacts, compiled into the single HTML or Markdown document chosen at the start (code artifacts additionally as real source files if the user wants them applied to the project):
+Hand back exactly these artifacts, compiled into the HTML or Markdown deliverable chosen at the start — one file, or the linked folder if it was split (code artifacts additionally as real source files if the user wants them applied to the project):
 
 1. **Action map** — table of protected actions with duplicate impact, key source, and recovery path
 2. **Idempotency store DDL** — ready to run against the user's database

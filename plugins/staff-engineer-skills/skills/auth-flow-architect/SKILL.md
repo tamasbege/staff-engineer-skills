@@ -33,6 +33,28 @@ Before or together with context gathering, ask the user one question: should the
 
 If the user doesn't state a preference or says "default", use HTML. Write the deliverable to a file (suggest `docs/auth-flow-design.html` or `.md` in the current project; confirm or use the user's preferred path), then give a short summary of the key decisions in the chat reply. Middleware/config code additionally goes into real source files where the user wants it — the document embeds copies for reading.
 
+**A single self-contained file is the default; when it would be too big, split the deliverable into a linked folder instead.** Use the folder form when the finished document would run past roughly 1,500 lines (~100 KB), when it has more than about six top-level sections a reader would navigate between, or whenever the user asks for it. Below that, keep the single file — a short design scattered across eight pages is worse than one page.
+
+```
+docs/auth-flow-design/
+  index.html                     overview, full contents, where each deliverable lives
+  01-flow-decisions.html
+  02-token-matrix.html
+  03-sessions-and-revocation.html
+  04-authorization-model.html
+  05-sequences.html
+  06-hardening-migration-testing.html
+  assets/styles.css              one shared stylesheet (still no CDN, no JS, no webfonts)
+```
+
+- **Split on top-level section boundaries only** — never mid-section, and never separate a table, diagram, or code block from the prose explaining it. Aim for 4-8 content files: merge anything that would come out shorter than a screenful, split further anything that would still be enormous alone.
+- **Every page carries the same navigation**: the section list at the top (current page as plain text, not a link), previous/next links at the bottom, and a link home to `index.html`. `index.html` is the entry point — scope of the design, the full table of contents with a one-line summary per section, and a pointer to which file holds each Final Deliverable.
+- **Relative links only** (`02-token-matrix.html#refresh-policy`), so the folder works opened from disk, moved, zipped, or committed. Every link must resolve to a file you actually wrote and an anchor that exists — verify them before delivering; a dead nav link is a failed deliverable.
+- **Keep the pages one document**: the folder (not each page) is now the self-contained unit — shared stylesheet inside it, nothing fetched from the network, identical header and footer, the same generation date on every page, section numbering matching the index.
+- **Markdown splits the same way**: `README.md` as the index plus `01-*.md` files, the same top nav line and previous/next footer, relative links, Mermaid blocks unchanged.
+
+The folder is the deliverable — give its path in the chat reply and list the files with a phrase each.
+
 ---
 
 ## Phase 1: Context Gathering (Mandatory)
@@ -219,7 +241,7 @@ Every design you produce must satisfy these. Verify each before delivering:
 
 ## Final Deliverables
 
-Hand back exactly these artifacts, compiled into the single HTML or Markdown document chosen in Phase 0 (code additionally into real source files where the user wants it):
+Hand back exactly these artifacts, compiled into the HTML or Markdown deliverable chosen in Phase 0 — one file, or the linked folder if it was split (code additionally into real source files where the user wants it):
 
 1. **Flow decisions** — client-type → flow table with justifications and banned-flow statement
 2. **Token matrix** — every credential: format, lifetime, storage, revocation (Phase 3.2 format)
